@@ -1,0 +1,414 @@
+/* ============================================================
+   EffectCard + EffectToggle — within the 2-col grid
+   ============================================================ */
+
+/* ---- Card shell ---- */
+.fx-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease);
+  cursor: default;
+}
+.fx-card:hover {
+  background: var(--card-hover);
+  border-color: var(--border-light);
+}
+.fx-card--active {
+  background: var(--card-active);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 6px 20px rgba(124, 92, 191, 0.12);
+}
+.fx-card--active:hover {
+  background: var(--card-active);
+}
+
+/* ---- Thumbnail strip ---- */
+.fx-card-thumb {
+  position: relative;
+  height: 64px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Per-category gradient vibes */
+.fx-card-thumb--DISTORT {
+  background:
+    conic-gradient(from 210deg at 65% 55%, #b03a60 0deg, #e06c3a 90deg, #c84870 180deg, transparent 270deg),
+    linear-gradient(135deg, #2a0e1a 0%, #1a0d00 50%, #2d0e20 100%);
+}
+.fx-card-thumb--POST_PROCESS {
+  background:
+    linear-gradient(160deg, #0a0520 0%, #1a0e3d 40%, #0d1540 70%, #060c1a 100%),
+    radial-gradient(ellipse 80% 60% at 30% 70%, rgba(100, 60, 210, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 75% 25%, rgba(50, 100, 200, 0.4) 0%, transparent 60%);
+  background-blend-mode: normal, screen, screen;
+}
+.fx-card-thumb--BLUR {
+  background:
+    radial-gradient(ellipse 90% 80% at 50% 50%, rgba(80, 110, 160, 0.35) 0%, transparent 70%),
+    linear-gradient(150deg, #111820 0%, #0f1520 40%, #131a22 100%);
+}
+.fx-card-thumb--GENERATIVE {
+  background:
+    linear-gradient(120deg, #061510 0%, #0a1e1a 35%, #0d0f1e 65%, #060d14 100%),
+    radial-gradient(ellipse 70% 55% at 20% 60%, rgba(0, 210, 140, 0.38) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 80% 30%, rgba(80, 40, 200, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 55% 80%, rgba(0, 180, 120, 0.22) 0%, transparent 55%);
+  background-blend-mode: normal, screen, screen, screen;
+}
+
+/* Category motif overlays (pseudo decorative lines/shapes) */
+.fx-card-thumb--DISTORT::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      70deg,
+      transparent 0px,
+      transparent 12px,
+      rgba(229, 80, 80, 0.06) 12px,
+      rgba(229, 80, 80, 0.06) 13px
+    );
+  pointer-events: none;
+}
+.fx-card-thumb--POST_PROCESS::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(124, 92, 191, 0.18) 0%, transparent 75%);
+  pointer-events: none;
+}
+.fx-card-thumb--BLUR::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle 30px at 35% 55%, rgba(120, 150, 200, 0.22) 0%, transparent 80%),
+    radial-gradient(circle 20px at 65% 40%, rgba(100, 130, 180, 0.16) 0%, transparent 80%);
+  pointer-events: none;
+}
+.fx-card-thumb--GENERATIVE::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0px,
+      transparent 16px,
+      rgba(0, 200, 120, 0.04) 16px,
+      rgba(0, 200, 120, 0.04) 17px
+    );
+  pointer-events: none;
+}
+
+/* Animated indicator dot */
+.fx-card-animated-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+/* ---- Card body ---- */
+.fx-card-body {
+  padding: 8px 9px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fx-card-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 26px;
+}
+
+.fx-card-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Toggle switch ---- */
+.fx-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.fx-toggle input[type='checkbox'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fx-toggle-track {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  border: 1px solid transparent;
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+  flex-shrink: 0;
+}
+
+.fx-toggle-track--on {
+  background: var(--accent);
+  border-color: transparent;
+}
+
+.fx-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform var(--t-fast) var(--ease);
+}
+
+.fx-toggle-knob--on {
+  transform: translateX(13px);
+}
+
+/* ---- Controls panel (expands below card body) ---- */
+.fx-controls {
+  overflow: hidden;
+}
+
+.fx-controls-inner {
+  padding: 8px 9px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Individual uniform control row ---- */
+.fx-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fx-control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.fx-control-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fx-control-value {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* ---- Range slider ---- */
+.fx-slider {
+  width: 100%;
+  height: 14px; /* click target height */
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: block;
+}
+
+/* WebKit track */
+.fx-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--border-light);
+}
+
+/* WebKit thumb */
+.fx-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 2px rgba(124, 92, 191, 0.3);
+  margin-top: -5px;
+  transition:
+    background var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+.fx-slider::-webkit-slider-thumb:hover {
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 4px rgba(124, 92, 191, 0.35);
+  transform: scale(1.1);
+}
+.fx-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  outline: none;
+}
+
+/* Firefox track */
+.fx-slider::-moz-range-track {
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--border-light);
+  border: none;
+}
+
+/* Firefox thumb */
+.fx-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  border: none;
+  box-shadow: 0 0 0 2px rgba(124, 92, 191, 0.3);
+  transition:
+    background var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease);
+}
+.fx-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(124, 92, 191, 0.35);
+}
+
+/* Firefox progress fill (not universally available but nice where it is) */
+.fx-slider::-moz-range-progress {
+  height: 3px;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+
+/* ---- Vec2 pair ---- */
+.fx-control-vec2 {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fx-control-vec2-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fx-control-vec2-axis {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  min-width: 10px;
+  text-align: right;
+}
+
+.fx-control-vec2-val {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 28px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Color input ---- */
+.fx-color-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.fx-color-input {
+  width: 30px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.fx-color-input:hover {
+  border-color: var(--border-light);
+}
+.fx-color-input::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+.fx-color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+.fx-color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+.fx-color-hex {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Reset button ---- */
+.fx-controls-reset {
+  align-self: flex-end;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--t-fast) var(--ease);
+  margin-top: 2px;
+}
+.fx-controls-reset:hover {
+  color: var(--accent-bright);
+}
